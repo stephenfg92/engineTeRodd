@@ -57,15 +57,6 @@ class RenderSystem: public System {
                     transform.rotation,
                     WHITE
                 );
-
-                /*Texture texture = assetStore->GetTexture(sprite.assetId);
-
-                DrawTexture(
-                    texture,
-                    static_cast<int>(transform.position.x),
-                    static_cast<int>(transform.position.y),
-                    BLACK
-                );*/
             }
         }
 

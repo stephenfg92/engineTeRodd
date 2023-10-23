@@ -14,6 +14,7 @@ class Game {
 
     public:
         static constexpr double scaleFactor = 3.0;
+        static constexpr int targetFps = 60;
 
         Game();
         ~Game();

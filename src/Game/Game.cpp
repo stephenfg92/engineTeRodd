@@ -1,6 +1,11 @@
 #include "Game.h"
 
 #include "../Systems/RenderSystem.h"
+#include "../Systems/AnimationSystem.h"
+
+#include "../Components/TransformComponent.h"
+#include "../Components/SpriteComponent.h"
+#include "../Components/AnimationComponent.h"
 
 Game::Game() {
     estaRodando = false;
@@ -25,7 +30,7 @@ void Game::Inicializar(){
 
     InitWindow(larguraTela, alturaTela, "engine");
 
-    SetTargetFPS(60);
+    SetTargetFPS(targetFps);
 
     estaRodando = true;
 }
@@ -44,6 +49,8 @@ void Game::Destruir(){
 }
 
 void Game::Atualizar(){
+    registry->GetSystem<AnimationSystem>().Update();
+
     registry->Update();
 }
 
@@ -59,13 +66,20 @@ void Game::Desenhar(){
 }
 
 void Game::CarregarNivel() {
+    registry->AddSystem<AnimationSystem>();
     registry->AddSystem<RenderSystem>();
 
     assetStore->AddTexture("tank-image", "assets/images/tank-panther-right.png");
+    assetStore->AddTexture("chopper-image", "assets/images/chopper-spritesheet.png");
 
     Entity tank = registry->CreateEntity();
     tank.AddComponent<TransformComponent>(Vector2{300.0, 700.0});
     tank.AddComponent<SpriteComponent>("tank-image", LAYER_1, 32, 32);
+
+    Entity chopper = registry->CreateEntity();
+    chopper.AddComponent<TransformComponent>(Vector2{500.0, 700.0});
+    chopper.AddComponent<SpriteComponent>("chopper-image", LAYER_2, 32, 32);
+    chopper.AddComponent<AnimationComponent>(2, 10);
 }
 
 void Game::InicializarJogo(){
