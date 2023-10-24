@@ -3,6 +3,7 @@
 #include <raylib.h>
 #include "../ECS/ECS.h"
 #include "../AssetStore/AssetStore.h"
+#include "../Events/EventBus.h"
 
 class Game {
     private:
@@ -11,6 +12,7 @@ class Game {
 
         std::unique_ptr<Registry> registry;
         std::unique_ptr<AssetStore> assetStore;
+        std::unique_ptr<EventBus> eventBus;
 
     public:
         static constexpr double scaleFactor = 3.0;
@@ -25,4 +27,5 @@ class Game {
         void Desenhar();
         void CarregarNivel();
         void InicializarJogo();
+        void ProcessarComandos();
 };

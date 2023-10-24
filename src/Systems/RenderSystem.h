@@ -40,11 +40,11 @@ class RenderSystem: public System {
 
                 Rectangle srcRect = sprite.srcRect;
 
-                Vector2 origem = Vector2{transform.position.x - (sprite.isFixed ? 0 : camera.x), transform.position.y - (sprite.isFixed ? 0 : camera.y)};
+                //Vector2 origem = Vector2{transform.position.x - (sprite.isFixed ? 0 : camera.x), transform.position.y - (sprite.isFixed ? 0 : camera.y)};
 
                 Rectangle dstRect = {
-                    origem.x,
-                    origem.y,
+                    transform.position.x,
+                    transform.position.y,
                     sprite.width * transform.scale.x,
                     sprite.height * transform.scale.y
                 };
@@ -53,7 +53,7 @@ class RenderSystem: public System {
                     assetStore->GetTexture(sprite.assetId),
                     srcRect,
                     dstRect,
-                    origem,
+                    Vector2{0.0f, 0.0f},
                     transform.rotation,
                     WHITE
                 );
