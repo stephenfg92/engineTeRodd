@@ -6,10 +6,18 @@
 #include <raylib.h>
 #include "TilemapData.h"
 
+struct FontData {
+    Font font;
+    int size;
+    int spacing;
+
+    FontData(Font f, int s, int sp) : font(f), size(s), spacing(sp) {}
+};
+
 class AssetStore {
     private:
         std::map<std::string, Texture2D> textures;
-        std::map<std::string, Font> fonts;
+        std::map<std::string, FontData> fonts;
         // map for audio
         std::map<std::string, TilemapData> tilemaps;
 
@@ -22,8 +30,8 @@ class AssetStore {
         Texture2D GetTexture(const std::string& assetId);
         std::vector<std::string> GetTextureIds();
 
-        void AddFont(const std::string& fontId, const std::string& filePath, int fontSize);
-        Font GetFont(const std::string& fontId);
+        void AddFont(const std::string& fontId, const std::string& filePath, int fontSize, int fontSpacing);
+        FontData GetFontData(const std::string& fontId);
 
         // Sem implementação por enquanto
         void AddTilemap(const std::string& tilemapId, TilemapData tilemapData);

@@ -62,7 +62,7 @@ typedef std::bitset<MAX_COMPONENTS> Signature;
 struct IComponent {
     protected:
         //static int nextId;
-        inline static int nextId{0};
+        inline static unsigned int nextId{0};
 };
 
 // Assigns a unique id to a component type
@@ -160,7 +160,7 @@ template <typename T> void Pool<T>::Set(int entityId, T object) {
         return;
     }
 
-    if (currentlyFreeIndex >= data.capacity())
+    if (static_cast<std::size_t>(currentlyFreeIndex) >= data.capacity())
         data.resize(data.size() * 2); // Duplica o tamanho para evitar resizes a cada adição.
 
     data[currentlyFreeIndex] = object;
@@ -272,7 +272,7 @@ template <typename TComponent, typename ...TArgs> void Registry::AddComponent(En
 
     // If needed, resizes the component pool.
 
-    if (componentId >= componentPools.size()) {
+    if (static_cast<std::size_t>(componentId) >= componentPools.size()) {
         //Possivelmente lento. Buscar alternativas. Ou não... o número de tipos de componentes criados durante o runtime não deve variar muito.
         // Se variar, vai ser uma vez ou outra.
         componentPools.resize(componentId + 1, nullptr);

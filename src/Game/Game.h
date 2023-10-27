@@ -15,8 +15,12 @@ class Game {
         std::unique_ptr<EventBus> eventBus;
 
     public:
-        static constexpr double scaleFactor = 3.0;
+        static constexpr float scaleFactor = 3.0f;
         static constexpr int targetFps = 60;
+        int mapWidth;
+        int mapHeight;
+        int larguraTela;
+        int alturaTela;
 
         Game();
         ~Game();

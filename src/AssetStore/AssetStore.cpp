@@ -19,8 +19,8 @@ void AssetStore::ClearAssets() {
 
     textures.clear();
 
-    for (auto font : fonts) {
-        UnloadFont(font.second);
+    for (auto& font : fonts) {
+        UnloadFont(font.second.font);
     }
 
     fonts.clear();
@@ -58,10 +58,12 @@ std::vector<std::string> AssetStore::GetTextureIds() {
 
 //Fontes
 
-void AssetStore::AddFont(const std::string& fontId, const std::string& filePath, int fontSize) {
-    fonts.emplace(fontId, LoadFontEx(filePath.c_str(), fontSize, NULL, 0));
+void AssetStore::AddFont(const std::string& fontId, const std::string& filePath, int fontSize, int fontSpacing) {
+    Font font = LoadFontEx(filePath.c_str(), fontSize, NULL, 0);
+    FontData fontData(font, fontSize, fontSpacing);
+    fonts.emplace(fontId, fontData);
 }
 
-Font AssetStore::GetFont(const std::string& fontId) {
+FontData AssetStore::GetFontData(const std::string& fontId) {
     return fonts.at(fontId);
 }
