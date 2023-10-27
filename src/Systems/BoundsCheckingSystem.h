@@ -14,9 +14,7 @@ class BoundsCheckingSystem: public System {
 			RequireComponent<TransformComponent>();
 		}
 
-		void Update(int maxX, int maxY) {
-			int maxW = Game::mapWidth;
-			int maxH = Game::mapHeight;
+		void Update(int maxW, int maxH) {
 
 			for (auto entity: GetSystemEntities()) {
 				auto& transform = entity.GetComponent<TransformComponent>();

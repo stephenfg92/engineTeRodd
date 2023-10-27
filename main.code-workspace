@@ -51,7 +51,22 @@
 			"streambuf": "cpp",
 			"cinttypes": "cpp",
 			"typeinfo": "cpp",
-			"ranges": "cpp"
+			"ranges": "cpp",
+			"bit": "cpp",
+			"bitset": "cpp",
+			"compare": "cpp",
+			"concepts": "cpp",
+			"cstring": "cpp",
+			"list": "cpp",
+			"map": "cpp",
+			"set": "cpp",
+			"functional": "cpp",
+			"iterator": "cpp",
+			"numeric": "cpp",
+			"random": "cpp",
+			"numbers": "cpp",
+			"span": "cpp",
+			"typeindex": "cpp"
 		},
 		"git.autoRepositoryDetection": false,
 		"git.enabled": false

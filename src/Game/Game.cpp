@@ -16,6 +16,7 @@
 #include "../Systems/CameraMovementSystem.h"
 #include "../Systems/DamageSystem.h"
 #include "../Systems/CollisionSystem.h"
+#include "../Systems/RenderEntityInfoSystem.h"
 
 #include "../Components/TransformComponent.h"
 #include "../Components/SpriteComponent.h"
@@ -88,7 +89,7 @@ void Game::CarregarNivel() {
     registry->AddSystem<ProjectileSystem>();
     registry->AddSystem<BoundsCheckingSystem>();
     //registry->AddSystem<RenderTextSystem>();
-    //registry->AddSystem<RenderEntityInfoSystem>();
+    registry->AddSystem<RenderEntityInfoSystem>();
     //registry->AddSystem<RenderDbgGuiSystem>();
 
     assetStore->AddTexture("tank-image", "assets/images/tank-panther-right.png");
@@ -184,7 +185,7 @@ void Game::Desenhar(){
         ClearBackground(RAYWHITE);
 
         registry->GetSystem<RenderSystem>().Update(camera, assetStore);
-        DrawText("RenderSystem!", 240, 350, 10, BLACK);
+        registry->GetSystem<RenderEntityInfoSystem>().Update(camera, assetStore);
 
     EndDrawing();
 }
