@@ -2,6 +2,8 @@
 
 #include "Game.h"
 
+#include "../ECS/Tag.h"
+
 #include "../Events/EventBus.h"
 
 #include "../Systems/RenderSystem.h"
@@ -9,12 +11,23 @@
 #include "../Systems/KeyboardControlSystem.h"
 #include "../Systems/ProjectileEmitterSystem.h"
 #include "../Systems/MovementSystem.h"
+#include "../Systems/ProjectileSystem.h"
+#include "../Systems/BoundsCheckingSystem.h"
+#include "../Systems/CameraMovementSystem.h"
+#include "../Systems/DamageSystem.h"
+#include "../Systems/CollisionSystem.h"
 
 #include "../Components/TransformComponent.h"
 #include "../Components/SpriteComponent.h"
 #include "../Components/AnimationComponent.h"
 #include "../Components/RigidBodyComponent.h"
 #include "../Components/KeyboardControlComponent.h"
+
+int Game::mapWidth = 0;
+int Game::mapHeight = 0;
+
+int Game::larguraTela = 0;
+int Game::alturaTela = 0;
 
 Game::Game() {
     estaRodando = false;
@@ -63,14 +76,29 @@ void Game::InicializarJogo(){
 }
 
 void Game::CarregarNivel() {
-    registry->AddSystem<KeyboardControlSystem>();
-    registry->AddSystem<ProjectileEmitterSystem>();
-    registry->AddSystem<AnimationSystem>();
-    registry->AddSystem<RenderSystem>();
     registry->AddSystem<MovementSystem>();
+    registry->AddSystem<RenderSystem>();
+    registry->AddSystem<AnimationSystem>();
+    registry->AddSystem<CollisionSystem>();
+    //registry->AddSystem<RenderColliderSystem>();
+    registry->AddSystem<DamageSystem>();
+    registry->AddSystem<KeyboardControlSystem>();
+    registry->AddSystem<CameraMovementSystem>();
+    registry->AddSystem<ProjectileEmitterSystem>();
+    registry->AddSystem<ProjectileSystem>();
+    registry->AddSystem<BoundsCheckingSystem>();
+    //registry->AddSystem<RenderTextSystem>();
+    //registry->AddSystem<RenderEntityInfoSystem>();
+    //registry->AddSystem<RenderDbgGuiSystem>();
 
     assetStore->AddTexture("tank-image", "assets/images/tank-panther-right.png");
+    assetStore->AddTexture("truck-image", "assets/images/truck-ford-right.png");
     assetStore->AddTexture("chopper-image", "assets/images/chopper-spritesheet.png");
+    assetStore->AddTexture("radar-image", "assets/images/radar.png");
+    assetStore->AddTexture("bullet-image", "assets/images/bullet.png");
+    assetStore->AddTexture("tree-image", "assets/images/tree.png");
+    assetStore->AddTexture("tilemap-image", "assets/tilemaps/jungle.png");
+    assetStore->AddFont("charriot-font", "assets/fonts/charriot.ttf", 20, 5);
 
     // Load tilemap
     int tileSize = 32;
@@ -107,16 +135,22 @@ void Game::CarregarNivel() {
     mapWidth = numCols * tileSize * tileScale;
     mapHeight = numRows * tileSize * tileScale;
 
+    Entity chopper = registry->CreateEntity();
+    chopper.AddTag(Tag::PLAYER);
+    chopper.AddComponent<TransformComponent>(Vector2{800.0, 350.0});
+    chopper.AddComponent<RigidBodyComponent>();
+    chopper.AddComponent<BoxColliderComponent>(32, 32);
+    chopper.AddComponent<SpriteComponent>("chopper-image", LAYER_2, 32, 32);
+    chopper.AddComponent<AnimationComponent>(2, 10);
+    chopper.AddComponent<KeyboardControlComponent>(Vector2{.0f, -300.0f}, Vector2{300.f, .0f}, Vector2{.0f, 300.0f}, Vector2{-300.0f, .0f});
+    chopper.AddComponent<HealthComponent>(100, true, "charriot-font");
+    chopper.AddComponent<ProjectileEmitterComponent>(Vector2{800.0f, .0f}, -1, 5000, 20, true);
+    chopper.AddComponent<CameraFollowComponent>();
+
     Entity tank = registry->CreateEntity();
     tank.AddComponent<TransformComponent>(Vector2{300.0, 700.0});
     tank.AddComponent<SpriteComponent>("tank-image", LAYER_1, 32, 32);
 
-    Entity chopper = registry->CreateEntity();
-    chopper.AddComponent<TransformComponent>(Vector2{800.0, 350.0});
-    chopper.AddComponent<SpriteComponent>("chopper-image", LAYER_2, 32, 32);
-    chopper.AddComponent<AnimationComponent>(2, 10);
-    chopper.AddComponent<RigidBodyComponent>();
-    chopper.AddComponent<KeyboardControlComponent>(Vector2{.0f, -300.0f}, Vector2{300.f, .0f}, Vector2{.0f, 300.0f}, Vector2{-300.0f, .0f});
 }
 
 void Game::ProcessarComandos(){
@@ -126,12 +160,20 @@ void Game::ProcessarComandos(){
 void Game::Atualizar(){
     eventBus->Reset();
 
+    // Eventos
     registry->GetSystem<ProjectileEmitterSystem>().SubscribeToEvents(eventBus);
     registry->GetSystem<MovementSystem>().SubscribeToEvents(eventBus);
+    registry->GetSystem<DamageSystem>().SubscribeToEvents(eventBus);
 
-    registry->GetSystem<AnimationSystem>().Update();
-    registry->GetSystem<ProjectileEmitterSystem>().Update(registry);
+    // Atualizações
+    registry->GetSystem<KeyboardControlSystem>().Update(eventBus);
     registry->GetSystem<MovementSystem>().Update(GetFrameTime());
+    registry->GetSystem<CollisionSystem>().Update(eventBus);
+    registry->GetSystem<ProjectileEmitterSystem>().Update(registry);
+    registry->GetSystem<ProjectileSystem>().Update();
+    registry->GetSystem<AnimationSystem>().Update();
+    registry->GetSystem<CameraMovementSystem>().Update(camera);
+    registry->GetSystem<BoundsCheckingSystem>().Update(mapWidth, mapHeight);
 
     registry->Update();
 }

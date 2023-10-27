@@ -43,8 +43,8 @@ class RenderSystem: public System {
                 //Vector2 origem = Vector2{transform.position.x - (sprite.isFixed ? 0 : camera.x), transform.position.y - (sprite.isFixed ? 0 : camera.y)};
 
                 Rectangle dstRect = {
-                    transform.position.x,
-                    transform.position.y,
+                    transform.position.x - (sprite.isFixed ? 0 : camera.x),
+                    transform.position.y - (sprite.isFixed ? 0 : camera.y),
                     sprite.width * transform.scale.x,
                     sprite.height * transform.scale.y
                 };

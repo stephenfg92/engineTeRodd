@@ -17,10 +17,10 @@ class Game {
     public:
         static constexpr float scaleFactor = 3.0f;
         static constexpr int targetFps = 60;
-        int mapWidth;
-        int mapHeight;
-        int larguraTela;
-        int alturaTela;
+        static int mapWidth;
+        static int mapHeight;
+        static int larguraTela;
+        static int alturaTela;
 
         Game();
         ~Game();

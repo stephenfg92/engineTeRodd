@@ -1,12 +1,14 @@
 #pragma once
 
+#include <raylib.h>
+
 struct HealthComponent {
     int healthPercentage;
     bool showHealthPercentage;
     std::string healthPercentageFont;
     int lastHealthPercentage;
     bool showHealthBar;
-    glm::vec2 healthBarSize;
+    Vector2 healthBarSize;
     float lastHealthBarW;
 
     HealthComponent(
@@ -14,7 +16,7 @@ struct HealthComponent {
         bool showHealthPercentage = true,
         std::string healthPercentageFont = "",
         bool showHealthBar = true,
-        glm::vec2 healthBarSize = glm::vec2(32, 5)
+        Vector2 healthBarSize = Vector2{32, 5}
     ) 
     {
         this->healthPercentage = healthPercentage;

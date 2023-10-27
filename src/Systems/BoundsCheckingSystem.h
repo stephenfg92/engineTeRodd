@@ -17,7 +17,6 @@ class BoundsCheckingSystem: public System {
 		void Update(int maxX, int maxY) {
 			int maxW = Game::mapWidth;
 			int maxH = Game::mapHeight;
-			double scale = Game::scaleFactor;
 
 			for (auto entity: GetSystemEntities()) {
 				auto& transform = entity.GetComponent<TransformComponent>();
