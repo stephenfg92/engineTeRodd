@@ -12,7 +12,7 @@ struct HealthComponent {
     float lastHealthBarW;
 
     HealthComponent(
-        int healthPercentage = 100,
+        int healthPercentage = 100, 
         bool showHealthPercentage = true,
         std::string healthPercentageFont = "",
         bool showHealthBar = true,

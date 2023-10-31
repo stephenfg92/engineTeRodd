@@ -2,6 +2,9 @@
 
 #include "Game.h"
 
+#include "../imgui/imgui.h"
+#include "../imgui/imgui_impl_raylib.h"
+
 #include "../ECS/Tag.h"
 
 #include "../Events/EventBus.h"
@@ -17,11 +20,15 @@
 #include "../Systems/DamageSystem.h"
 #include "../Systems/CollisionSystem.h"
 #include "../Systems/RenderEntityInfoSystem.h"
+#include "../Systems/RenderColliderSystem.h"
+#include "../Systems/RenderTextSystem.h"
+#include "../Systems/RenderDbgGuiSystem.h"
 
 #include "../Components/TransformComponent.h"
 #include "../Components/SpriteComponent.h"
 #include "../Components/AnimationComponent.h"
 #include "../Components/RigidBodyComponent.h"
+#include "../Components/BoxColliderComponent.h"
 #include "../Components/KeyboardControlComponent.h"
 
 int Game::mapWidth = 0;
@@ -32,6 +39,7 @@ int Game::alturaTela = 0;
 
 Game::Game() {
     estaRodando = false;
+    debug = true;
 }
 
 Game::~Game() {
@@ -39,6 +47,11 @@ Game::~Game() {
 }
 
 void Game::Destruir(){
+    if (debug){
+        ImGui_ImplRaylib_Shutdown();
+        ImGui::DestroyContext();
+    }
+
     CloseWindow();
 }
 
@@ -58,6 +71,15 @@ void Game::Inicializar(){
     InitWindow(larguraTela, alturaTela, "engine");
 
     SetTargetFPS(targetFps);
+
+    if (debug){
+    ImGui::CreateContext();
+        ImGuiIO& io = ImGui::GetIO(); (void)io;
+        io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+        io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;  
+        ImGui::StyleColorsDark();
+        ImGui_ImplRaylib_Init();
+    }
 
     estaRodando = true;
 }
@@ -81,16 +103,16 @@ void Game::CarregarNivel() {
     registry->AddSystem<RenderSystem>();
     registry->AddSystem<AnimationSystem>();
     registry->AddSystem<CollisionSystem>();
-    //registry->AddSystem<RenderColliderSystem>();
+    registry->AddSystem<RenderColliderSystem>();
     registry->AddSystem<DamageSystem>();
     registry->AddSystem<KeyboardControlSystem>();
     registry->AddSystem<CameraMovementSystem>();
     registry->AddSystem<ProjectileEmitterSystem>();
     registry->AddSystem<ProjectileSystem>();
     registry->AddSystem<BoundsCheckingSystem>();
-    //registry->AddSystem<RenderTextSystem>();
+    registry->AddSystem<RenderTextSystem>();
     registry->AddSystem<RenderEntityInfoSystem>();
-    //registry->AddSystem<RenderDbgGuiSystem>();
+    registry->AddSystem<RenderDbgGuiSystem>();
 
     assetStore->AddTexture("tank-image", "assets/images/tank-panther-right.png");
     assetStore->AddTexture("truck-image", "assets/images/truck-ford-right.png");
@@ -156,6 +178,7 @@ void Game::CarregarNivel() {
 
 void Game::ProcessarComandos(){
     registry->GetSystem<KeyboardControlSystem>().Update(eventBus);
+    ImGui_ImplRaylib_ProcessEvents();
 }
 
 void Game::Atualizar(){
@@ -186,6 +209,11 @@ void Game::Desenhar(){
 
         registry->GetSystem<RenderSystem>().Update(camera, assetStore);
         registry->GetSystem<RenderEntityInfoSystem>().Update(camera, assetStore);
+
+        if (debug){
+            registry->GetSystem<RenderColliderSystem>().Update(camera);
+            registry->GetSystem<RenderDbgGuiSystem>().Update(registry, assetStore, camera);
+        }
 
     EndDrawing();
 }

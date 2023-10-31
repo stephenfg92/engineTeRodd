@@ -8,6 +8,7 @@
 class Game {
     private:
         bool estaRodando;
+        bool debug;
         Rectangle camera;
 
         std::unique_ptr<Registry> registry;
