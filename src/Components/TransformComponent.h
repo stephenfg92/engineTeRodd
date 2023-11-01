@@ -2,8 +2,8 @@
 #include <Raylib.h>
 #include "../Game/Game.h"
 #include "../Ut/ut.h"
+struct  TransformComponent {
 
-struct TransformComponent {
     Vector2 position;
     Vector2 scale;
     double rotation;

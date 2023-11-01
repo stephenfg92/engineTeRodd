@@ -170,9 +170,42 @@ void Game::CarregarNivel() {
     chopper.AddComponent<ProjectileEmitterComponent>(Vector2{800.0f, .0f}, -1, 5000, 20, true);
     chopper.AddComponent<CameraFollowComponent>();
 
+    Entity truck = registry->CreateEntity();
+    truck.AddTag(Tag::ENEMY);
+    truck.AddComponent<TransformComponent>(Vector2{500.0, 40.0});
+    truck.AddComponent<SpriteComponent>("truck-image", LAYER_1, 32, 32);
+    truck.AddComponent<BoxColliderComponent>(32, 32);
+    truck.AddComponent<HealthComponent>(100, true, "charriot-font");
+
     Entity tank = registry->CreateEntity();
+    tank.AddTag(Tag::ENEMY);
     tank.AddComponent<TransformComponent>(Vector2{300.0, 700.0});
+    tank.AddComponent<RigidBodyComponent>(Vector2{80.0, 0.0});
     tank.AddComponent<SpriteComponent>("tank-image", LAYER_1, 32, 32);
+    tank.AddComponent<BoxColliderComponent>(32, 32);
+    tank.AddComponent<ProjectileEmitterComponent>(chopper.GetId(), Vector2{300.0, 0.0}, 1000, 5000, 25);
+    tank.AddComponent<HealthComponent>(100, true, "charriot-font");
+
+    Entity treeA = registry->CreateEntity();
+    treeA.AddTag(Tag::OBSTACLE);
+    treeA.AddComponent<TransformComponent>(Vector2{630.0, 700.0});
+    treeA.AddComponent<SpriteComponent>("tree-image", LAYER_1, 16, 32);
+    treeA.AddComponent<BoxColliderComponent>(16, 32);
+
+    Entity treeB = registry->CreateEntity();
+    treeB.AddTag(Tag::OBSTACLE);
+    treeB.AddComponent<TransformComponent>(Vector2{200.0, 700.0});
+    treeB.AddComponent<SpriteComponent>("tree-image", LAYER_1, 16, 32);
+    treeB.AddComponent<BoxColliderComponent>(16, 32);
+
+    Entity radar = registry->CreateEntity();
+    radar.AddComponent<TransformComponent>(Vector2{static_cast<float>(larguraTela - 74), 10.0f}, Vector2{1.0f, 1.0f});
+    radar.AddComponent<SpriteComponent>("radar-image", LAYER_2, 64, 64, true);
+    radar.AddComponent<AnimationComponent>(8, 5, true);
+
+    Entity label = registry->CreateEntity();
+    label.AddComponent<TextLabelComponent>("charriot-font", "TEXT TEST!", Vector2{100, 100}, RAYWHITE, true);
+
 
 }
 
