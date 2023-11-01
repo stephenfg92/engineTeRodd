@@ -7,16 +7,16 @@
 struct ProjectileEmitterComponent {
     int targetEntityId;
     Vector2 projectileVelocity;
-    int repeatFrequency;
+    double repeatFrequency;
     int projectileDuration;
     int hitPercentDamage;
     bool isFriendly;
-    int lastEmissionTime;
+    double lastEmissionTime;
     bool emissionRequestedByEvent;
 
     ProjectileEmitterComponent(
         Vector2 projectileVelocity = Vector2{.0f, .0f},
-        int repeatFrequency = 0,
+        double repeatFrequency = 0,
         int projectileDuration = 10000,
         int hitPercentDamage = 10,
         bool isFriendly = false
@@ -33,7 +33,7 @@ struct ProjectileEmitterComponent {
     ProjectileEmitterComponent(
         int targetEntityId,
         Vector2 projectileVelocity = Vector2{.0f, .0f},
-        int repeatFrequency = 0,
+        double repeatFrequency = 0,
         int projectileDuration = 10000,
         int hitPercentDamage = 10,
         bool isFriendly = false

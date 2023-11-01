@@ -183,7 +183,7 @@ void Game::CarregarNivel() {
     tank.AddComponent<RigidBodyComponent>(Vector2{80.0, 0.0});
     tank.AddComponent<SpriteComponent>("tank-image", LAYER_1, 32, 32);
     tank.AddComponent<BoxColliderComponent>(32, 32);
-    tank.AddComponent<ProjectileEmitterComponent>(chopper.GetId(), Vector2{300.0, 0.0}, 1000, 5000, 25);
+    tank.AddComponent<ProjectileEmitterComponent>(chopper.GetId(), Vector2{300.0, 0.0}, 0.75, 5000, 25);
     tank.AddComponent<HealthComponent>(100, true, "charriot-font");
 
     Entity treeA = registry->CreateEntity();
