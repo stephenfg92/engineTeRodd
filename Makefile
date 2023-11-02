@@ -287,6 +287,9 @@ ifneq ($(wildcard /opt/homebrew/lib/.*),)
     LDFLAGS += -L/opt/homebrew/lib
 endif
 
+# Adicionando a bilioteca do LUA na busca do linker
+LDFLAGS += -L"D:/Te/dev/cpp/ssge/lib"
+
 ifeq ($(PLATFORM),PLATFORM_DESKTOP)
     ifeq ($(PLATFORM_OS),BSD)
         # Consider -L$(RAYLIB_INSTALL_PATH)
@@ -359,6 +362,9 @@ ifeq ($(PLATFORM),PLATFORM_WEB)
     # Libraries for web (HTML5) compiling
     LDLIBS = $(RAYLIB_RELEASE_PATH)/libraylib.bc
 endif
+
+# Linkando a biblioteca do LUA
+LDLIBS += -llua54
 
 # Define a recursive wildcard function
 rwildcard=$(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2) $(filter $(subst *,%,$2),$d))
