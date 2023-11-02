@@ -150,7 +150,7 @@ void Game::CarregarNivel() {
                 Vector2{x * (tileScale * tileSize),  y * (tileScale * tileSize)}, 
                 Vector2{tileScale, tileScale}, 
                 0.0);
-            tile.AddComponent<SpriteComponent>("tilemap-image", TILEMAP_LAYER ,tileSize, tileSize, false, false, srcRectX, srcRectY);        
+            tile.AddComponent<SpriteComponent>("tilemap-image", TILEMAP_LAYER ,tileSize, tileSize, false, false, false, srcRectX, srcRectY);        
         }
     }
     mapFile.close();
@@ -183,7 +183,7 @@ void Game::CarregarNivel() {
     tank.AddComponent<RigidBodyComponent>(Vector2{80.0, 0.0});
     tank.AddComponent<SpriteComponent>("tank-image", LAYER_1, 32, 32);
     tank.AddComponent<BoxColliderComponent>(32, 32);
-    tank.AddComponent<ProjectileEmitterComponent>(chopper.GetId(), Vector2{300.0, 0.0}, 0.75, 5000, 25);
+    tank.AddComponent<ProjectileEmitterComponent>(chopper.GetId(), Vector2{300.0, 0.0}, 0.65, 5000, 25);
     tank.AddComponent<HealthComponent>(100, true, "charriot-font");
 
     Entity treeA = registry->CreateEntity();
