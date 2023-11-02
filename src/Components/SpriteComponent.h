@@ -9,7 +9,8 @@ struct SpriteComponent {
     int width;
     int height;
     bool isFixed;
-    bool flip;
+    bool flipX;
+    bool flipY;
     Rectangle srcRect;
 
     SpriteComponent(
@@ -18,7 +19,8 @@ struct SpriteComponent {
         float width = 1,
         float height = 1,
         bool isFixed = false,
-        bool flip = false,
+        bool flipX = false,
+        bool flipY = false,
         float srcRectX = 0,
         float srcRectY = 0
     ) {
@@ -27,7 +29,8 @@ struct SpriteComponent {
         this->width = width;
         this->height = height;
         this->isFixed = isFixed;
-        this->flip = flip;
+        this->flipX = flipX;
+        this->flipY = flipY;
         this->srcRect = { srcRectX, srcRectY, width, height };       
     }
 };

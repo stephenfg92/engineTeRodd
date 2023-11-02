@@ -80,8 +80,12 @@ class ProjectileEmitterSystem: public System {
 
         void OnProjectileRequest(ProjectileRequestEvent& event){
             auto& entity = event.entity;
-            auto registry = entity.GetRegistry();
             auto& projectileEmitter = entity.GetComponent<ProjectileEmitterComponent>();
+
+            if(GetTime() - projectileEmitter.lastEmissionTime < projectileEmitter.cooldown)
+                return;
+
+            auto registry = entity.GetRegistry();
             const auto& transform = entity.GetComponent<TransformComponent>();
             const auto& rigidBody = entity.GetComponent<RigidBodyComponent>();
             const auto& sprite = entity.GetComponent<SpriteComponent>();

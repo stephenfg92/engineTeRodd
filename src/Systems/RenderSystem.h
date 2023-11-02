@@ -40,7 +40,11 @@ class RenderSystem: public System {
 
                 Rectangle srcRect = sprite.srcRect;
 
-                //Vector2 origem = Vector2{transform.position.x - (sprite.isFixed ? 0 : camera.x), transform.position.y - (sprite.isFixed ? 0 : camera.y)};
+                if (sprite.flipX)
+                    srcRect.width *= -1;
+
+                if (sprite.flipY)
+                    srcRect.height *= -1;
 
                 Rectangle dstRect = {
                     transform.position.x - (sprite.isFixed ? 0 : camera.x),

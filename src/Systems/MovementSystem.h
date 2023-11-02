@@ -45,9 +45,8 @@ class MovementSystem: public System {
         void OnEnemyCollidesWithObstacle(Entity entity) {
             if (entity.HasComponent<SpriteComponent>()) {
                 SpriteComponent& sprite = entity.GetComponent<SpriteComponent>();
-                //sprite.flip = (sprite.flip == SDL_FLIP_NONE) ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
-            }
-                
+                sprite.flipX = !sprite.flipX;
+            }                
 
             if (entity.HasComponent<RigidBodyComponent>()){
                 Vector2 velocity =  entity.GetComponent<RigidBodyComponent>().velocity;

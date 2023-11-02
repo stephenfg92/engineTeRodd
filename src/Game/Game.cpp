@@ -167,7 +167,7 @@ void Game::CarregarNivel() {
     chopper.AddComponent<AnimationComponent>(2, 10);
     chopper.AddComponent<KeyboardControlComponent>(Vector2{.0f, -300.0f}, Vector2{300.f, .0f}, Vector2{.0f, 300.0f}, Vector2{-300.0f, .0f});
     chopper.AddComponent<HealthComponent>(100, true, "charriot-font");
-    chopper.AddComponent<ProjectileEmitterComponent>(Vector2{800.0f, .0f}, -1, 5000, 20, true);
+    chopper.AddComponent<ProjectileEmitterComponent>(Vector2{800.0f, .0f}, -1, 0.3, 5000, 20, true);
     chopper.AddComponent<CameraFollowComponent>();
 
     Entity truck = registry->CreateEntity();
