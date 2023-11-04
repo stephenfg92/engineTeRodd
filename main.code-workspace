@@ -66,7 +66,10 @@
 			"random": "cpp",
 			"numbers": "cpp",
 			"span": "cpp",
-			"typeindex": "cpp"
+			"typeindex": "cpp",
+			"ctime": "cpp",
+			"forward_list": "cpp",
+			"variant": "cpp"
 		},
 		"git.autoRepositoryDetection": false,
 		"git.enabled": false

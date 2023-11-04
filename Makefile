@@ -288,7 +288,7 @@ ifneq ($(wildcard /opt/homebrew/lib/.*),)
 endif
 
 # Adicionando a bilioteca do LUA na busca do linker
-LDFLAGS += -L"D:/Te/dev/cpp/ssge/lib"
+#LDFLAGS += -L"D:/Te/dev/cpp/ssge/lib"
 
 ifeq ($(PLATFORM),PLATFORM_DESKTOP)
     ifeq ($(PLATFORM_OS),BSD)
@@ -364,7 +364,7 @@ ifeq ($(PLATFORM),PLATFORM_WEB)
 endif
 
 # Linkando a biblioteca do LUA
-LDLIBS += -llua54
+# LDLIBS += -llua54
 
 # Define a recursive wildcard function
 rwildcard=$(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2) $(filter $(subst *,%,$2),$d))

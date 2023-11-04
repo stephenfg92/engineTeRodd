@@ -11,6 +11,7 @@
 #include "../Components/BoxColliderComponent.h"
 #include "../Components/ProjectileEmitterComponent.h"
 #include "../Components/ProjectileComponent.h"
+#include "../Components/DanoAoContatoComponent.h"
 
 #include "../Events/ProjectileRequestEvent.h"
 #include "../Events/EventBus.h"
@@ -70,7 +71,8 @@ class ProjectileEmitterSystem: public System {
                     projectile.AddComponent<RigidBodyComponent>(projVel);
                     projectile.AddComponent<BoxColliderComponent>(4, 4);
                     projectile.AddComponent<SpriteComponent>("bullet-image", LAYER_2, 4, 4);
-                    projectile.AddComponent<ProjectileComponent>(projectileEmitter.isFriendly, projectileEmitter.hitPercentDamage, projectileEmitter.projectileDuration);
+                    projectile.AddComponent<ProjectileComponent>(projectileEmitter.isFriendly, projectileEmitter.projectileDuration);
+                    projectile.AddComponent<DanoAoContatoComponent>(projectileEmitter.hitPercentDamage);
                     
                     projectileEmitter.lastEmissionTime = GetTime();
                 }
@@ -113,7 +115,8 @@ class ProjectileEmitterSystem: public System {
             projectile.AddComponent<RigidBodyComponent>(projectileVelocity);
             projectile.AddComponent<BoxColliderComponent>(4, 4);
             projectile.AddComponent<SpriteComponent>("bullet-image", LAYER_2, 4, 4);
-            projectile.AddComponent<ProjectileComponent>(projectileEmitter.isFriendly, projectileEmitter.hitPercentDamage, projectileEmitter.projectileDuration);
+            projectile.AddComponent<ProjectileComponent>(projectileEmitter.isFriendly, projectileEmitter.projectileDuration);
+            projectile.AddComponent<DanoAoContatoComponent>(projectileEmitter.hitPercentDamage);
             projectileEmitter.lastEmissionTime = GetTime();
             projectileEmitter.emissionRequestedByEvent = false;
         }

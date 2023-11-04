@@ -41,10 +41,10 @@ class DamageSystem: public System {
 
     void OnProjectileCollidesWithEntity(Entity entity, Entity projectile) {
         auto& healthComponent = entity.GetComponent<HealthComponent>();
-        const auto& projectileComponent = projectile.GetComponent<ProjectileComponent>();
+        const auto& danoAoContatoComponent = projectile.GetComponent<DanoAoContatoComponent>();
 
         healthComponent.lastHealthPercentage = healthComponent.healthPercentage;
-        healthComponent.healthPercentage -= projectileComponent.hitPercentDamage;
+        healthComponent.healthPercentage -= danoAoContatoComponent.dano;
 
         if (healthComponent.healthPercentage <= 0) {
             entity.Destroy();

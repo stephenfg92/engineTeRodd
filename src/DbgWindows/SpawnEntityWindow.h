@@ -17,6 +17,7 @@
 #include "../Components/BoxColliderComponent.h"
 #include "../Components/HealthComponent.h"
 #include "../Components/ProjectileEmitterComponent.h"
+#include "../Components/DanoAoContatoComponent.h"
 
 
 
@@ -49,13 +50,12 @@ class SpawnEntityWindow : public Window {
 				const float min = 0.f, max = 999.9f;
 				ImGui::DragFloat("Angle", &projAngle, 0.1f, 0.0f, 360.0f, "%.1f degrees", sliderFlags);
 				ImGui::DragScalar("Magnitude", ImGuiDataType_Float, &projMag, 0.1f, &min, &max, "%.1f");
-				static int projFreq = 1;
-				static int projDuration = 1;
-				ImGui::InputInt("Repeat Frequency (seconds)", &projFreq);
-				ImGui::InputInt("Duration (seconds)", &projDuration);
+				static double projFreq = 1;
+				static double projDuration = 1;
+				ImGui::InputDouble("Repeat Frequency (seconds)", &projFreq);
+				ImGui::InputDouble("Duration (seconds)", &projDuration);
 				static int projDmg;
 				ImGui::DragInt("Damage", &projDmg, 1, 0, 100);
-
 
 				// Sprite
 				ImGui::Text("Sprite (list won't update during runtime)");
@@ -102,7 +102,8 @@ class SpawnEntityWindow : public Window {
 			float xPos, yPos;
 			float xVel, yVel;
 			float projAngle, projMag;
-			int projFreq, projDuration, projDamage;
+			double projFreq, projDuration;
+			int projDamage;
 			std::string assetId;
 		};
 
@@ -118,6 +119,7 @@ class SpawnEntityWindow : public Window {
 
 			float rads = ut::DegToRad(args.projAngle);
 			Vector2 projVel = Vector2Scale(ut::RadToVec(rads), args.projMag);
-			enemy.AddComponent<ProjectileEmitterComponent>(projVel, args.projFreq * 1000, args.projDuration * 1000, args.projDamage);
+			enemy.AddComponent<ProjectileEmitterComponent>(projVel, args.projFreq, args.projDuration);
+			enemy.AddComponent<DanoAoContatoComponent>(args.projDamage);
 		}
 };

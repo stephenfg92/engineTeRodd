@@ -19,6 +19,7 @@
 #include "../Systems/CameraMovementSystem.h"
 #include "../Systems/DamageSystem.h"
 #include "../Systems/CollisionSystem.h"
+#include "../Systems/ParticleSystem.h"
 #include "../Systems/RenderEntityInfoSystem.h"
 #include "../Systems/RenderColliderSystem.h"
 #include "../Systems/RenderTextSystem.h"
@@ -30,6 +31,7 @@
 #include "../Components/RigidBodyComponent.h"
 #include "../Components/BoxColliderComponent.h"
 #include "../Components/KeyboardControlComponent.h"
+#include "../Components/PlayerParticleEmitterComponent.h"
 
 int Game::mapWidth = 0;
 int Game::mapHeight = 0;
@@ -110,6 +112,7 @@ void Game::CarregarNivel() {
     registry->AddSystem<ProjectileEmitterSystem>();
     registry->AddSystem<ProjectileSystem>();
     registry->AddSystem<BoundsCheckingSystem>();
+    registry->AddSystem<ParticleSystem>();
     registry->AddSystem<RenderTextSystem>();
     registry->AddSystem<RenderEntityInfoSystem>();
     registry->AddSystem<RenderDbgGuiSystem>();
@@ -167,8 +170,8 @@ void Game::CarregarNivel() {
     chopper.AddComponent<AnimationComponent>(2, 10);
     chopper.AddComponent<KeyboardControlComponent>(Vector2{.0f, -300.0f}, Vector2{300.f, .0f}, Vector2{.0f, 300.0f}, Vector2{-300.0f, .0f});
     chopper.AddComponent<HealthComponent>(100, true, "charriot-font");
-    chopper.AddComponent<ProjectileEmitterComponent>(Vector2{800.0f, .0f}, -1, 0.3, 5000, 20, true);
     chopper.AddComponent<CameraFollowComponent>();
+    chopper.AddComponent<PlayerParticleEmitterComponent>(300.0f, 200.0f, 0.99f, 0.25, 10.0, 25);
 
     Entity truck = registry->CreateEntity();
     truck.AddTag(Tag::ENEMY);
@@ -215,16 +218,20 @@ void Game::ProcessarComandos(){
 }
 
 void Game::Atualizar(){
+    double deltaTempo = GetFrameTime();
+
     eventBus->Reset();
 
     // Eventos
     registry->GetSystem<ProjectileEmitterSystem>().SubscribeToEvents(eventBus);
     registry->GetSystem<MovementSystem>().SubscribeToEvents(eventBus);
     registry->GetSystem<DamageSystem>().SubscribeToEvents(eventBus);
+    registry->GetSystem<ParticleSystem>().SubscribeToEvents(eventBus);
 
     // Atualizações
     registry->GetSystem<KeyboardControlSystem>().Update(eventBus);
-    registry->GetSystem<MovementSystem>().Update(GetFrameTime());
+    registry->GetSystem<ParticleSystem>().Update(eventBus, deltaTempo);
+    registry->GetSystem<MovementSystem>().Update(deltaTempo);
     registry->GetSystem<CollisionSystem>().Update(eventBus);
     registry->GetSystem<ProjectileEmitterSystem>().Update(registry);
     registry->GetSystem<ProjectileSystem>().Update();

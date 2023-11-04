@@ -1,15 +1,19 @@
 #pragma once
 
 #include <raylib.h>
+#include <raymath.h>
 
 #include "../Events/EventBus.h"
 #include "../Events/KeyPressedEvent.h"
 #include "../Events/ProjectileRequestEvent.h"
+#include "../Events/EmitParticleEvent.h"
 
 #include "../Components/KeyboardControlComponent.h"
 #include "../Components/SpriteComponent.h"
 #include "../Components/RigidBodyComponent.h"
 #include "../Components/ProjectileEmitterComponent.h"
+#include "../Components/PlayerParticleEmitterComponent.h"
+#include "../Components/TransformComponent.h"
 
 
 class KeyboardControlSystem: public System {
@@ -22,13 +26,6 @@ class KeyboardControlSystem: public System {
 
         void Update(std::unique_ptr<EventBus>& eventBus) {
             for (auto entity: GetSystemEntities()) {
-                if(entity.HasComponent<ProjectileEmitterComponent>()){
-                    auto& projectileEmitter = entity.GetComponent<ProjectileEmitterComponent>();
-                    if (projectileEmitter.emissionRequestedByEvent){
-                        eventBus->EmitEvent<ProjectileRequestEvent>(entity);
-                    }
-                }
-
 
                 const auto& keyboardControl = entity.GetComponent<KeyboardControlComponent>();
                 auto& sprite = entity.GetComponent<SpriteComponent>();
@@ -55,10 +52,20 @@ class KeyboardControlSystem: public System {
                 }
 
                 if (IsKeyDown(KEY_SPACE)){
-                    if(entity.HasComponent<ProjectileEmitterComponent>()) {
-                        auto& projectileEmitter = entity.GetComponent<ProjectileEmitterComponent>();
-                        projectileEmitter.emissionRequestedByEvent = true;
-                    } 
+                    if(entity.HasComponent<PlayerParticleEmitterComponent>() && entity.HasComponent<TransformComponent>()) {
+                        auto& particleEmitter = entity.GetComponent<PlayerParticleEmitterComponent>();
+                        
+                        if (GetTime() - particleEmitter.ultimaEmissao < particleEmitter.tempoDeEspera)
+                            return;
+                        
+                        auto& transform = entity.GetComponent<TransformComponent>();
+
+                        particleEmitter.sentido = Vector2Normalize(rigidBody.velocity);
+
+                        eventBus->EmitEvent<EmitParticleEvent>(entity.GetRegistry(), transform, particleEmitter, sprite);
+
+                        particleEmitter.ultimaEmissao = GetTime();
+                    }
                 }
             }
         }
