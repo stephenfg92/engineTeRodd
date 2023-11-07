@@ -9,7 +9,7 @@ struct ProjectileEmitterComponent {
     Vector2 projectileVelocity;
     double repeatFrequency;
     double cooldown;
-    int projectileDuration;
+    double projectileDuration;
     int hitPercentDamage;
     bool isFriendly;
     double lastEmissionTime;
@@ -19,7 +19,7 @@ struct ProjectileEmitterComponent {
         Vector2 projectileVelocity = Vector2{.0f, .0f},
         double repeatFrequency = 0,
         double cooldown = 0,
-        int projectileDuration = 10000,
+        double projectileDuration = 10.00,
         int hitPercentDamage = 10,
         bool isFriendly = false
     ) {

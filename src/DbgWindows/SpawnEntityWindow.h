@@ -118,8 +118,10 @@ class SpawnEntityWindow : public Window {
 			enemy.AddComponent<HealthComponent>(100, true, "charriot-font");
 
 			float rads = ut::DegToRad(args.projAngle);
-			Vector2 projVel = Vector2Scale(ut::RadToVec(rads), args.projMag);
-			enemy.AddComponent<ProjectileEmitterComponent>(projVel, args.projFreq, args.projDuration);
+			Vector2 velocidade = ut::RadToVec(rads);
+			velocidade.x *= args.projMag;
+			velocidade.y *= args.projMag;
+			enemy.AddComponent<ProjectileEmitterComponent>(velocidade, args.projFreq, args.projDuration);
 			enemy.AddComponent<DanoAoContatoComponent>(args.projDamage);
 		}
 };

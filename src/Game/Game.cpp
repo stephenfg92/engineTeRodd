@@ -171,7 +171,7 @@ void Game::CarregarNivel() {
     chopper.AddComponent<KeyboardControlComponent>(Vector2{.0f, -300.0f}, Vector2{300.f, .0f}, Vector2{.0f, 300.0f}, Vector2{-300.0f, .0f});
     chopper.AddComponent<HealthComponent>(100, true, "charriot-font");
     chopper.AddComponent<CameraFollowComponent>();
-    chopper.AddComponent<PlayerParticleEmitterComponent>(300.0f, 200.0f, 0.99f, 0.25, 10.0, 25);
+    chopper.AddComponent<PlayerParticleEmitterComponent>(900.0f, 200.0f, 0.99f, 0.25, 10.0, 25);
 
     Entity truck = registry->CreateEntity();
     truck.AddTag(Tag::ENEMY);
@@ -186,8 +186,18 @@ void Game::CarregarNivel() {
     tank.AddComponent<RigidBodyComponent>(Vector2{80.0, 0.0});
     tank.AddComponent<SpriteComponent>("tank-image", LAYER_1, 32, 32);
     tank.AddComponent<BoxColliderComponent>(32, 32);
-    tank.AddComponent<ProjectileEmitterComponent>(chopper.GetId(), Vector2{300.0, 0.0}, 0.65, 5000, 25);
+    tank.AddComponent<ProjectileEmitterComponent>(chopper.GetId(), Vector2{300.0, 0.0}, 0.65, 5.0, 25);
     tank.AddComponent<HealthComponent>(100, true, "charriot-font");
+
+    Entity tank2 = registry->CreateEntity();
+    tank2.AddTag(Tag::ENEMY);
+    tank2.AddComponent<TransformComponent>(Vector2{750.0f, 700.0f});
+    tank2.AddComponent<RigidBodyComponent>(Vector2{});
+    tank2.AddComponent<SpriteComponent>("tank-image", LAYER_1, 32, 32);
+    tank2.AddComponent<BoxColliderComponent>(32, 32);
+    tank2.AddComponent<ProjectileEmitterComponent>(chopper.GetId(), Vector2{300.0, 0.0}, 0.65, 5.0, 25);
+    tank2.AddComponent<HealthComponent>(100, true, "charriot-font");
+
 
     Entity treeA = registry->CreateEntity();
     treeA.AddTag(Tag::OBSTACLE);

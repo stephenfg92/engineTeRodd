@@ -69,10 +69,12 @@ class ParticleSystem: public System {
         void Integrar(TransformComponent& transform, ParticleComponent& particle, float deltaTempo){
                 if (particle.massaReciproca <= 0.0f) return;
 
-                transform.position.x += (particle.velocity.x * deltaTempo) * transform.scale.x;
-                transform.position.y += (particle.velocity.y * deltaTempo) * transform.scale.y;
+                transform.position.x += particle.velocity.x * deltaTempo;
+                transform.position.y += particle.velocity.y * deltaTempo;
 
-                Vector2 aceleracaoResultante = Vector2{};
+                Vector2 aceleracaoResultante = particle.aceleracao;
+                aceleracaoResultante.x *= particle.acumuladorDeForca.x + particle.massaReciproca;
+                aceleracaoResultante.y *= particle.acumuladorDeForca.y + particle.massaReciproca;
                 particle.velocity.x += aceleracaoResultante.x * deltaTempo;
                 particle.velocity.y += aceleracaoResultante.y * deltaTempo;
 
@@ -82,5 +84,26 @@ class ParticleSystem: public System {
 
                 particle.acumuladorDeForca.x = .0f;
                 particle.acumuladorDeForca.y = .0f;
+        }
+
+        void AplicarForcaDeGravidade(ParticleComponent& particula, Vector2 forcaGravitacional){
+            if (particula.massaInfinita) return;
+
+            Vector2 forcaVezesMassa = Vector2Scale(forcaGravitacional, particula.massa);
+            particula.acumuladorDeForca = Vector2Add(particula.acumuladorDeForca, forcaVezesMassa);
+        }
+
+        void AplicarForcaDeArrasto(ParticleComponent& particula, float coefiecienteDeArrastoK1, float coeficienteDeArrastoK2){
+            Vector2 velocidade = particula.velocity;
+
+            float magnitudeVelocidade = Vector2Length(velocidade);
+            float coeficienteDeArrasto = 
+                (coefiecienteDeArrastoK1 * magnitudeVelocidade) +
+                (coeficienteDeArrastoK2 * magnitudeVelocidade * magnitudeVelocidade);
+
+            Vector2 velocidadeNormalizada = Vector2Normalize(velocidade);
+            Vector2 forcaDeArrasto = Vector2Scale(velocidadeNormalizada, -coeficienteDeArrasto);
+
+            particula.acumuladorDeForca = Vector2Add(particula.acumuladorDeForca, forcaDeArrasto);
         }
 };

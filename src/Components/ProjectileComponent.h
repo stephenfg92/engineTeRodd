@@ -4,12 +4,12 @@
 
 struct ProjectileComponent {
     bool isFriendly;
-    int duration;
-    int startTime;
+    double duration;
+    double startTime;
 
     ProjectileComponent(
         bool isFriendly = false,
-        int duration = 1000
+        int duration = 10
     ) {
         this->isFriendly = isFriendly;
         this->duration = duration;
