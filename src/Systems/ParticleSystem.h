@@ -13,6 +13,7 @@
 #include "../Components/PlayerParticleEmitterComponent.h"
 #include "../Components/SpriteComponent.h"
 #include "../Components/DanoAoContatoComponent.h"
+#include "../Components/GeradorDeForcaDeMola.h"
 
 #include "../Events/Event.h"
 #include "../Events/EventBus.h"
@@ -86,10 +87,10 @@ class ParticleSystem: public System {
                 particle.acumuladorDeForca.y = .0f;
         }
 
-        void AplicarForcaDeGravidade(ParticleComponent& particula, Vector2 forcaGravitacional){
+        void AplicarForca(ParticleComponent& particula, Vector2 forca){
             if (particula.massaInfinita) return;
 
-            Vector2 forcaVezesMassa = Vector2Scale(forcaGravitacional, particula.massa);
+            Vector2 forcaVezesMassa = Vector2Scale(forca, particula.massa);
             particula.acumuladorDeForca = Vector2Add(particula.acumuladorDeForca, forcaVezesMassa);
         }
 
@@ -105,5 +106,98 @@ class ParticleSystem: public System {
             Vector2 forcaDeArrasto = Vector2Scale(velocidadeNormalizada, -coeficienteDeArrasto);
 
             particula.acumuladorDeForca = Vector2Add(particula.acumuladorDeForca, forcaDeArrasto);
+        }
+
+        void AplicarForcaDeMola(ParticleComponent& particula, TransformComponent& transform, Entity* entidadeNaOutraExtremidade, GeradorDeForcaDeMola& mola){
+            if (entidadeNaOutraExtremidade == nullptr)
+                return;
+            
+            Registry* registry = entidadeNaOutraExtremidade->GetRegistry();
+            Vector2 posicaoDaOutraExtremidade = registry->GetComponent<TransformComponent>(*entidadeNaOutraExtremidade).position;
+            
+            Vector2 forca;
+            forca = transform.position;
+            forca = Vector2Subtract(forca, posicaoDaOutraExtremidade);
+
+            float magnitudeDaForca = Vector2Length(forca);
+            magnitudeDaForca = fabs(magnitudeDaForca - mola.comprimentoDeRepouso);
+            magnitudeDaForca *= mola.constanteDaMola;
+
+            Vector2 forcaNormalizada = Vector2Normalize(forca);
+            Vector2 forcaDaMola = Vector2Scale(forcaNormalizada, -magnitudeDaForca);
+            particula.acumuladorDeForca = Vector2Add(particula.acumuladorDeForca, forcaDaMola);
+        }
+
+        // Pode ser usada para uma câmera presa a uma mola. Basta mover a entidadeAncora com pase na posição do personagem.
+        void AplicarForcaDeMolaAncorada(ParticleComponent& particula, TransformComponent& transform, Entity* entidadeAncora, GeradorDeForcaDeMola& mola){
+            if (entidadeAncora == nullptr)
+                return;
+            
+            Registry* registry = entidadeAncora->GetRegistry();
+            Vector2 posicaoDaOutraExtremidade = registry->GetComponent<TransformComponent>(*entidadeAncora).position;
+            
+            Vector2 forca;
+            forca = transform.position;
+            forca = Vector2Subtract(forca, posicaoDaOutraExtremidade);
+
+            float magnitudeDaForca = Vector2Length(forca);
+            magnitudeDaForca = (mola.comprimentoDeRepouso - magnitudeDaForca) * mola.constanteDaMola;
+
+            Vector2 forcaNormalizada = Vector2Normalize(forca);
+            Vector2 forcaDaMola = Vector2Scale(forcaNormalizada, magnitudeDaForca);
+            particula.acumuladorDeForca = Vector2Add(particula.acumuladorDeForca, forcaDaMola);
+        }
+
+        void AplicarForcaDeElastico(ParticleComponent& particula, TransformComponent& transform, Entity* entidadeNaOutraExtremidade, GeradorDeForcaDeMola& mola){
+            if (entidadeNaOutraExtremidade == nullptr)
+                return;
+            
+            Registry* registry = entidadeNaOutraExtremidade->GetRegistry();
+            Vector2 posicaoDaOutraExtremidade = registry->GetComponent<TransformComponent>(*entidadeNaOutraExtremidade).position;
+            
+            Vector2 forca;
+            forca = transform.position;
+            forca = Vector2Subtract(forca, posicaoDaOutraExtremidade);
+
+            float magnitudeDaForca = Vector2Length(forca);
+            if (magnitudeDaForca <= mola.comprimentoDeRepouso)
+                return;
+            magnitudeDaForca = (mola.comprimentoDeRepouso - magnitudeDaForca) * mola.constanteDaMola;
+
+            Vector2 forcaNormalizada = Vector2Normalize(forca);
+            Vector2 forcaElastica = Vector2Scale(forcaNormalizada, -magnitudeDaForca);
+            particula.acumuladorDeForca = Vector2Add(particula.acumuladorDeForca, forcaElastica);
+        }
+
+        // Precisa que o comprimentoDeRepouso seja sempre igual a 0.
+        void AplicarForcaDeFalsaMolaRigida(ParticleComponent& particula, TransformComponent& transform, Entity* entidadeAncorada, GeradorDeForcaDeMola& mola, float deltaTempo){
+            if (entidadeAncorada == nullptr)
+                return;
+
+            if (particula.massaInfinita)
+                return;
+            
+            Registry* registry = entidadeAncorada->GetRegistry();
+            Vector2 posicaoDaAncora = registry->GetComponent<TransformComponent>(*entidadeAncorada).position;
+            Vector2 posicaoRelativaAancora = Vector2Subtract(transform.position, posicaoDaAncora);
+
+            float gamma = 0.5f * sqrt(4 * mola.constanteDaMola - particula.atenuacao * particula.atenuacao);
+            if (gamma == 0.0f)
+                return;
+            Vector2 c = Vector2Scale(posicaoDaAncora, particula.atenuacao / (2.0f * gamma));
+            Vector2 velocidadeEscolonadaReciprocoGama = Vector2Scale(particula.velocity, 1.0f / gamma);
+            c = Vector2Add(c, velocidadeEscolonadaReciprocoGama);
+
+            Vector2 posicaoAlvo = Vector2Scale(posicaoRelativaAancora, cos(gamma * deltaTempo));
+            Vector2 cVezesSenoGamaVezesDelta = Vector2Scale(c, sin(gamma * deltaTempo));
+            posicaoAlvo = Vector2Add(posicaoAlvo, cVezesSenoGamaVezesDelta);
+            float exp = std::exp(-0.5f * deltaTempo * particula.atenuacao);
+            posicaoAlvo = Vector2Scale(posicaoAlvo, exp);
+
+            Vector2 aceleracao = Vector2Subtract(posicaoAlvo, posicaoRelativaAancora);
+            aceleracao = Vector2Scale(aceleracao, 1.0f / (deltaTempo * deltaTempo));
+            aceleracao = Vector2Subtract(aceleracao, Vector2Scale(particula.velocity, 1.0f / deltaTempo));
+
+            particula.acumuladorDeForca = Vector2Scale(aceleracao, particula.massa);
         }
 };
